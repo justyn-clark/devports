@@ -1,0 +1,30 @@
+small_version: "1.0.0"
+owner: agent
+tasks:
+    - id: task-1
+      title: Initial task
+      status: completed
+    - id: task-2
+      title: Scaffold crate structure and dependencies for ports CLI/TUI
+      status: completed
+    - id: task-3
+      title: Implement config loader, schema validation, and config path command
+      status: completed
+    - id: task-4
+      title: Implement listener scan and process metadata resolution
+      status: completed
+    - id: task-5
+      title: Implement list/doctor rendering and JSON output paths
+      status: completed
+    - id: task-6
+      title: Implement kill/start command semantics with strict port checks
+      status: completed
+    - id: task-7
+      title: Implement ratatui interface and key actions
+      status: completed
+    - id: task-8
+      title: Add parser fixtures/tests and README usage documentation
+      status: completed
+    - id: task-9
+      title: Run tests/checks and finalize handoff
+      status: blocked

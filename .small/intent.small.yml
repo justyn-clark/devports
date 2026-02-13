@@ -1,0 +1,20 @@
+small_version: "1.0.0"
+owner: "human"
+intent: "Build a macOS-first Rust CLI+TUI (ports) to scan, attribute, manage, and validate local development service ports using an explicit registry."
+scope:
+  include:
+    - "Rust crate in this repository implementing commands: scan, list, tui, kill, start, doctor, config path"
+    - "Process/port inspection via platform commands (lsof/ps on macOS, Linux-friendly fallback)"
+    - "Strict registry-based service mapping via ~/.jcn/ports.yml"
+    - "Parser tests and fixtures"
+    - "README usage and operator docs"
+  exclude:
+    - "Background daemon or TCP manager service in MVP"
+    - "Web UI"
+    - "Remote orchestration"
+success_criteria:
+  - "`ports scan` returns stable JSON containing listeners and ownership metadata."
+  - "`ports kill --port <n>` terminates owning process group with TERM->KILL timeout escalation."
+  - "`ports start <service>` fails non-zero when desired port is occupied and prints owner details; otherwise starts from configured repo root."
+  - "`ports doctor` reports config duplicates, missing repos/start commands, and runtime collisions."
+  - "`ports tui` supports key actions: k, K, s, r, e, /, q."

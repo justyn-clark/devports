@@ -1,0 +1,126 @@
+small_version: "1.0.0"
+owner: agent
+entries:
+    - command: small init
+      evidence: Initialized .small workspace and seeded canonical artifacts
+      notes: small init in /Users/justin/Documents/Justyn Clark Network/REPOS/jcn-ports
+      status: completed
+      task_id: meta/init
+      timestamp: "2026-02-13T21:56:10.479917000Z"
+    - evidence: Accepted draft intent from .small-cache/drafts/intent.small.yml
+      notes: small accept intent
+      status: completed
+      task_id: meta/accept-intent
+      timestamp: "2026-02-13T21:59:00.892444000Z"
+    - evidence: Accepted draft constraints from .small-cache/drafts/constraints.small.yml
+      notes: small accept constraints
+      status: completed
+      task_id: meta/accept-constraints
+      timestamp: "2026-02-13T21:59:07.195365000Z"
+    - evidence: Reset plan.small.yml to template
+      notes: small plan --reset
+      status: completed
+      task_id: plan-reset
+      timestamp: "2026-02-13T21:59:11.722004000Z"
+    - evidence: Added task task-2 via small plan --add
+      notes: Scaffold crate structure and dependencies for ports CLI/TUI
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: pending
+      task_id: task-2
+      timestamp: "2026-02-13T21:59:11.729631000Z"
+    - evidence: Added task task-3 via small plan --add
+      notes: Implement config loader, schema validation, and config path command
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: pending
+      task_id: task-3
+      timestamp: "2026-02-13T21:59:11.736249000Z"
+    - evidence: Added task task-4 via small plan --add
+      notes: Implement listener scan and process metadata resolution
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: pending
+      task_id: task-4
+      timestamp: "2026-02-13T21:59:11.742643000Z"
+    - evidence: Added task task-5 via small plan --add
+      notes: Implement list/doctor rendering and JSON output paths
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: pending
+      task_id: task-5
+      timestamp: "2026-02-13T21:59:11.748842000Z"
+    - evidence: Added task task-6 via small plan --add
+      notes: Implement kill/start command semantics with strict port checks
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: pending
+      task_id: task-6
+      timestamp: "2026-02-13T21:59:11.755229000Z"
+    - evidence: Added task task-7 via small plan --add
+      notes: Implement ratatui interface and key actions
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: pending
+      task_id: task-7
+      timestamp: "2026-02-13T21:59:11.761626000Z"
+    - evidence: Added task task-8 via small plan --add
+      notes: Add parser fixtures/tests and README usage documentation
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: pending
+      task_id: task-8
+      timestamp: "2026-02-13T21:59:11.767786000Z"
+    - evidence: Added task task-9 via small plan --add
+      notes: Run tests/checks and finalize handoff
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: pending
+      task_id: task-9
+      timestamp: "2026-02-13T21:59:11.774080000Z"
+    - evidence: Initialized SMALL run with concrete intent, constraints, and execution plan.
+      notes: Updated human-owned artifacts through draft/accept and expanded plan for MVP delivery.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-1
+      timestamp: "2026-02-13T21:59:21.181923000Z"
+    - evidence: Scaffolded Rust crate layout with CLI/TUI module tree and dependency manifest.
+      notes: Created src/{cli,config,scan,proc,render,tui} modules and crate entrypoints.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-2
+      timestamp: "2026-02-13T22:03:01.140292000Z"
+    - evidence: Implemented config schema loader, defaults, service lookup, and config-path command flow.
+      notes: Added ~/.jcn/ports.yml default and service matching by path prefix.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-3
+      timestamp: "2026-02-13T22:03:01.151371000Z"
+    - evidence: Implemented listener scan pipeline with lsof/ss discovery, ps metadata, cwd lookup, and repo-root resolution.
+      notes: Added macOS-first lsof parsing and Linux-friendly fallback path.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-4
+      timestamp: "2026-02-13T22:03:01.161449000Z"
+    - evidence: Implemented list/doctor rendering and JSON output support.
+      notes: Added doctor checks for duplicate ports, missing repos/start, and unmapped listeners.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-5
+      timestamp: "2026-02-13T22:03:01.170995000Z"
+    - evidence: Implemented strict start preflight and group-oriented kill semantics with TERM->KILL escalation.
+      notes: Kill prefers PGID and falls back to process tree PID signaling when PGID missing.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-6
+      timestamp: "2026-02-13T22:03:01.180718000Z"
+    - evidence: Implemented ratatui table UI with required key bindings.
+      notes: Added keymap for k/K/s/r/e//q plus navigation and rescan actions.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-7
+      timestamp: "2026-02-13T22:03:01.190410000Z"
+    - evidence: Added parser fixtures/tests and operator README usage docs.
+      notes: Created tests for lsof parser, ps parser, and config parsing with fixtures.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-8
+      timestamp: "2026-02-13T22:03:01.200979000Z"
+    - evidence: cargo test could not download crates due DNS/network restriction to index.crates.io in sandbox.
+      notes: Validation cannot proceed until dependency fetch is allowed or cache is pre-populated.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: blocked
+      task_id: task-9
+      timestamp: "2026-02-13T22:03:01.211401000Z"
