@@ -80,7 +80,10 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
                     .to_string()
             });
 
-            for (name, svc) in cfg.services {
+            let mut services = cfg.services.iter().collect::<Vec<_>>();
+            services.sort_by(|(a, _), (b, _)| a.cmp(b));
+
+            for (name, svc) in services {
                 let running = records.iter().find(|r| r.port == svc.port);
                 let status = if running.is_some() { "LISTEN" } else { "DOWN" };
                 println!("{:<20} http://{}:{} {}", name, hostname, svc.port, status);
