@@ -35,6 +35,10 @@ pub enum Commands {
         service: String,
     },
     Doctor,
+    Urls {
+        #[arg(long)]
+        host: Option<String>,
+    },
     Config {
         #[command(subcommand)]
         command: ConfigCommands,
@@ -44,4 +48,17 @@ pub enum Commands {
 #[derive(Subcommand, Debug)]
 pub enum ConfigCommands {
     Path,
+    Init {
+        #[arg(long)]
+        force: bool,
+    },
+    Add {
+        name: String,
+        #[arg(long)]
+        repo: PathBuf,
+        #[arg(long)]
+        port: u16,
+        #[arg(long)]
+        start: Option<String>,
+    },
 }

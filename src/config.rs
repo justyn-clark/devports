@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use anyhow::{Context, Result, bail};
+use anyhow::{bail, Context, Result};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -57,6 +57,51 @@ pub fn default_config_path() -> PathBuf {
     PathBuf::from(home).join(".jcn").join("ports.yml")
 }
 
+pub fn init_config(path: &Path, force: bool) -> Result<()> {
+    if path.exists() && !force {
+        bail!("config already exists (use --force to overwrite)");
+    }
+
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    fs::write(path, "services: {}\n")?;
+
+    Ok(())
+}
+
+pub fn add_service(
+    path: &Path,
+    name: String,
+    repo: PathBuf,
+    port: u16,
+    start: Option<String>,
+) -> Result<()> {
+    let mut cfg = if path.exists() {
+        Config::load(path)?
+    } else {
+        Config {
+            services: Default::default(),
+        }
+    };
+
+    cfg.services.insert(
+        name,
+        ServiceConfig {
+            repo,
+            port,
+            start,
+            tags: vec![],
+        },
+    );
+
+    let yaml = serde_yaml::to_string(&cfg)?;
+    fs::write(path, yaml)?;
+
+    Ok(())
+}
+
 pub mod doctor {
     use super::*;
     use crate::scan::model::ScanRecord;
@@ -92,7 +137,7 @@ pub mod doctor {
                     message: format!("service {name} repo missing: {}", svc.repo.display()),
                 });
             }
-            if svc.start.as_deref().unwrap_or("" ).trim().is_empty() {
+            if svc.start.as_deref().unwrap_or("").trim().is_empty() {
                 issues.push(DoctorIssue {
                     level: "warn".to_string(),
                     code: "missing_start".to_string(),
