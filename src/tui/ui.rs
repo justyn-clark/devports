@@ -48,12 +48,13 @@ pub fn draw(frame: &mut Frame<'_>, app: &App) {
         ],
     )
     .header(Row::new(vec!["PORT", "SERVICE", "PID", "PGID", "COMMAND"]))
-    .block(Block::default().title("ports tui").borders(Borders::ALL));
+    .block(Block::default().title("devports tui").borders(Borders::ALL));
 
     frame.render_widget(table, chunks[0]);
 
-    let help = Paragraph::new("k term | K kill | s start | r rescan | e open config | / filter | q quit")
-        .block(Block::default().borders(Borders::ALL));
+    let help =
+        Paragraph::new("k term | K kill | s start | r rescan | e open config | / filter | q quit")
+            .block(Block::default().borders(Borders::ALL));
     frame.render_widget(help, chunks[1]);
 
     let filter = Paragraph::new(format!("filter: {}", app.filter));

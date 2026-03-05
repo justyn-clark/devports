@@ -3,11 +3,7 @@ use anyhow::Result;
 use super::model::ListenerRecord;
 
 pub fn parse_lsof_listeners(input: &str) -> Vec<ListenerRecord> {
-    input
-        .lines()
-        .skip(1)
-        .filter_map(parse_line)
-        .collect()
+    input.lines().skip(1).filter_map(parse_line).collect()
 }
 
 fn parse_line(line: &str) -> Option<ListenerRecord> {

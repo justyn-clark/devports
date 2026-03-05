@@ -1,4 +1,4 @@
-use ports::proc::ps::parse_ps_line;
+use devports::proc::ps::parse_ps_line;
 
 #[test]
 fn parse_ps_fixture_line() {

@@ -9,7 +9,7 @@ use std::path::Path;
 use std::process::Command;
 use std::time::Duration;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, anyhow, bail};
 use cli::{Commands, ConfigCommands};
 use config::{Config, ServiceConfig};
 use scan::model::{JoinedPortRecord, ScanRecord};
@@ -20,7 +20,11 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
         .clone()
         .unwrap_or_else(config::default_config_path);
 
-    match cli.command {
+    let Some(command) = cli.command else {
+        return Ok(());
+    };
+
+    match command {
         Commands::Scan => {
             let records = scan::scan_listeners()?;
             render::json::print_pretty(&records)?;
@@ -73,12 +77,7 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
             let cfg = Config::load(&config_path)?;
             let records = scan::scan_listeners()?;
 
-            let hostname = host.unwrap_or_else(|| {
-                hostname::get()
-                    .unwrap_or_default()
-                    .to_string_lossy()
-                    .to_string()
-            });
+            let hostname = host.unwrap_or_else(default_host);
 
             let mut services = cfg.services.iter().collect::<Vec<_>>();
             services.sort_by(|(a, _), (b, _)| a.cmp(b));
@@ -88,6 +87,17 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
                 let status = if running.is_some() { "LISTEN" } else { "DOWN" };
                 println!("{:<20} http://{}:{} {}", name, hostname, svc.port, status);
             }
+        }
+        Commands::Open { name } => {
+            let cfg = Config::load(&config_path)?;
+            let svc = cfg
+                .services
+                .get(&name)
+                .ok_or_else(|| anyhow!("service not found"))?;
+            let url = format!("http://{}:{}", default_host(), svc.port);
+
+            open_target(&url)?;
+            println!("opened {}", url);
         }
         Commands::Config { command } => match command {
             ConfigCommands::Path => {
@@ -151,6 +161,31 @@ fn start_service(service: &ServiceConfig) -> Result<()> {
     let status = cmd.status().context("failed to execute start command")?;
     if !status.success() {
         bail!("start command exited with {status}");
+    }
+
+    Ok(())
+}
+
+fn default_host() -> String {
+    hostname::get()
+        .unwrap_or_default()
+        .to_string_lossy()
+        .to_string()
+}
+
+fn open_target(target: &str) -> Result<()> {
+    let command = if cfg!(target_os = "macos") {
+        "open"
+    } else {
+        "xdg-open"
+    };
+    let status = Command::new(command)
+        .arg(target)
+        .status()
+        .with_context(|| format!("failed to launch {command}"))?;
+
+    if !status.success() {
+        bail!("{command} exited with {status}");
     }
 
     Ok(())

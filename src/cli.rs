@@ -3,7 +3,11 @@ use std::path::PathBuf;
 use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
-#[command(name = "ports", version, about = "Manage local dev service ports")]
+#[command(
+    name = "devports",
+    version,
+    about = "devports — local development port manager"
+)]
 pub struct Cli {
     #[arg(long)]
     pub config: Option<PathBuf>,
@@ -15,7 +19,7 @@ pub struct Cli {
     pub no_color: bool,
 
     #[command(subcommand)]
-    pub command: Commands,
+    pub command: Option<Commands>,
 }
 
 #[derive(Subcommand, Debug)]
@@ -38,6 +42,9 @@ pub enum Commands {
     Urls {
         #[arg(long)]
         host: Option<String>,
+    },
+    Open {
+        name: String,
     },
     Config {
         #[command(subcommand)]
