@@ -25,7 +25,17 @@ Perfect for:
 ## Install
 
 ```bash
-cargo install --git https://github.com/<user>/devports
+cargo install --git https://github.com/justyn-clark/devports
+```
+
+## Example config
+
+```yaml
+services:
+  web:
+    repo: ~/projects/web
+    port: 3000
+    start: vite --host 0.0.0.0 --port 3000
 ```
 
 ## Quickstart
