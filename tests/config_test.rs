@@ -1,6 +1,6 @@
 use std::fs;
 
-use ports::config::Config;
+use devports::config::Config;
 
 #[test]
 fn parse_config_yaml() {

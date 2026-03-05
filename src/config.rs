@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -54,7 +54,7 @@ fn path_prefix_eq(prefix: &Path, full: &Path) -> bool {
 
 pub fn default_config_path() -> PathBuf {
     let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".jcn").join("ports.yml")
+    PathBuf::from(home).join(".devports").join("config.yml")
 }
 
 pub fn init_config(path: &Path, force: bool) -> Result<()> {

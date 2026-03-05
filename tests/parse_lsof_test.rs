@@ -1,4 +1,4 @@
-use ports::scan::lsof::parse_lsof_listeners;
+use devports::scan::lsof::parse_lsof_listeners;
 
 #[test]
 fn parse_lsof_fixture() {
