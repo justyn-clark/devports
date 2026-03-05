@@ -3,8 +3,8 @@ use crate::scan::model::{JoinedPortRecord, ScanRecord};
 
 pub fn print_list_table(records: &[JoinedPortRecord]) {
     println!(
-        "{:<6}  {:<20}  {:<8}  {:<8}  {:<8}  {}",
-        "PORT", "SERVICE", "PID", "PGID", "MATCH", "COMMAND"
+        "{:<6}  {:<20}  {:<8}  {:<8}  {:<8}  COMMAND",
+        "PORT", "SERVICE", "PID", "PGID", "MATCH"
     );
     for row in records {
         let match_state = match (row.service_name.as_ref(), row.configured_port) {

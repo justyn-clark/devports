@@ -57,17 +57,16 @@ pub fn run_tui(config_path: &Path, cfg: Config) -> Result<()> {
                     }
                 }
                 Action::Start => {
-                    if let Some(row) = app.selected() {
-                        if let Some(name) = &row.service_name {
-                            if let Some(svc) = cfg.services.get(name) {
-                                let _ = std::process::Command::new("zsh")
-                                    .arg("-lc")
-                                    .arg(svc.start.clone().unwrap_or_default())
-                                    .current_dir(&svc.repo)
-                                    .status();
-                                app.set_rows(join_with_config(&cfg)?);
-                            }
-                        }
+                    if let Some(row) = app.selected()
+                        && let Some(name) = &row.service_name
+                        && let Some(svc) = cfg.services.get(name)
+                    {
+                        let _ = std::process::Command::new("zsh")
+                            .arg("-lc")
+                            .arg(svc.start.clone().unwrap_or_default())
+                            .current_dir(&svc.repo)
+                            .status();
+                        app.set_rows(join_with_config(&cfg)?);
                     }
                 }
                 Action::OpenConfig => {
