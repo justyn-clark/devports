@@ -9,7 +9,7 @@ use std::path::Path;
 use std::process::Command;
 use std::time::Duration;
 
-use anyhow::{Context, Result, bail};
+use anyhow::{bail, Context, Result};
 use cli::{Commands, ConfigCommands};
 use config::{Config, ServiceConfig};
 use scan::model::{JoinedPortRecord, ScanRecord};
@@ -48,11 +48,7 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
             let Some(record) = record else {
                 bail!("no listener found for port {port}");
             };
-            proc::kill::kill_record(
-                &record,
-                Duration::from_millis(timeout_ms),
-                hard,
-            )?;
+            proc::kill::kill_record(&record, Duration::from_millis(timeout_ms), hard)?;
             eprintln!("killed listener on port {port}");
         }
         Commands::Start { service } => {
@@ -73,9 +69,34 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
                 std::process::exit(1);
             }
         }
+        Commands::Urls { host } => {
+            let cfg = Config::load(&config_path)?;
+            let records = scan::scan_listeners()?;
+
+            let hostname = host.unwrap_or_else(default_host);
+
+            for (name, svc) in cfg.services {
+                let running = records.iter().find(|r| r.port == svc.port);
+                let status = if running.is_some() { "LISTEN" } else { "DOWN" };
+                println!("{:<20} http://{}:{} {}", name, hostname, svc.port, status);
+            }
+        }
         Commands::Config { command } => match command {
             ConfigCommands::Path => {
                 println!("{}", config_path.display());
+            }
+            ConfigCommands::Init { force } => {
+                config::init_config(&config_path, force)?;
+                println!("created {}", config_path.display());
+            }
+            ConfigCommands::Add {
+                name,
+                repo,
+                port,
+                start,
+            } => {
+                config::add_service(&config_path, name, repo, port, start)?;
+                println!("service added");
             }
         },
     }
@@ -140,4 +161,21 @@ pub fn open_config(path: &Path) -> Result<()> {
     }
 
     Ok(())
+}
+
+fn default_host() -> String {
+    if let Ok(out) = Command::new("scutil")
+        .arg("--get")
+        .arg("LocalHostName")
+        .output()
+    {
+        if out.status.success() {
+            let name = String::from_utf8_lossy(&out.stdout).trim().to_string();
+            if !name.is_empty() {
+                return format!("{}.local", name);
+            }
+        }
+    }
+
+    "localhost".to_string()
 }
