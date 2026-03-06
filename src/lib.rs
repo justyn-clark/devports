@@ -58,8 +58,7 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
         Commands::Start { service } => {
             let cfg = Config::load(&config_path)?;
             let svc = cfg.service(&service)?;
-            ensure_port_available(svc.port)?;
-            start_service(svc)?;
+            start_configured_service(svc)?;
         }
         Commands::Doctor => {
             let cfg = Config::load(&config_path)?;
@@ -137,7 +136,7 @@ fn join_records(records: &[ScanRecord], cfg: &Config) -> Vec<JoinedPortRecord> {
         .collect()
 }
 
-fn ensure_port_available(port: u16) -> Result<()> {
+pub(crate) fn ensure_port_available(port: u16) -> Result<()> {
     let records = scan::scan_listeners()?;
     if let Some(existing) = records.into_iter().find(|r| r.port == port) {
         render::table::print_conflict(&existing);
@@ -146,7 +145,12 @@ fn ensure_port_available(port: u16) -> Result<()> {
     Ok(())
 }
 
-fn start_service(service: &ServiceConfig) -> Result<()> {
+pub(crate) fn start_configured_service(service: &ServiceConfig) -> Result<()> {
+    ensure_port_available(service.port)?;
+    start_service(service)
+}
+
+pub(crate) fn start_service(service: &ServiceConfig) -> Result<()> {
     let start = service
         .start
         .as_deref()
@@ -166,11 +170,21 @@ fn start_service(service: &ServiceConfig) -> Result<()> {
     Ok(())
 }
 
-fn default_host() -> String {
+pub(crate) fn default_host() -> String {
     hostname::get()
         .unwrap_or_default()
         .to_string_lossy()
         .to_string()
+}
+
+pub(crate) fn service_url(port: u16) -> String {
+    format!("http://{}:{}", default_host(), port)
+}
+
+pub(crate) fn open_service_url(port: u16) -> Result<String> {
+    let url = service_url(port);
+    open_target(&url)?;
+    Ok(url)
 }
 
 fn open_target(target: &str) -> Result<()> {

@@ -2,6 +2,8 @@ pub mod lsof;
 pub mod model;
 pub mod ss;
 
+use std::collections::HashSet;
+
 use anyhow::Result;
 use model::{ListenerRecord, ScanRecord};
 
@@ -35,12 +37,22 @@ pub fn scan_listeners() -> Result<Vec<ScanRecord>> {
 }
 
 fn discover_listeners() -> Result<Vec<ListenerRecord>> {
-    if cfg!(target_os = "macos") {
-        return lsof::run_lsof();
+    let listeners = if cfg!(target_os = "macos") {
+        lsof::run_lsof()?
+    } else {
+        match lsof::run_lsof() {
+            Ok(records) if !records.is_empty() => records,
+            _ => ss::run_ss()?,
+        }
+    };
+
+    let mut seen = HashSet::new();
+    let mut unique = Vec::new();
+    for listener in listeners {
+        if seen.insert(listener.clone()) {
+            unique.push(listener);
+        }
     }
 
-    match lsof::run_lsof() {
-        Ok(records) if !records.is_empty() => Ok(records),
-        _ => ss::run_ss(),
-    }
+    Ok(unique)
 }

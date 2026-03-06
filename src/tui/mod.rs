@@ -6,8 +6,11 @@ use std::path::Path;
 use std::time::Duration;
 
 use anyhow::Result;
+use crossterm::execute;
 use crossterm::event::{self, Event};
-use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
+use crossterm::terminal::{
+    EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode,
+};
 use ratatui::Terminal;
 use ratatui::backend::CrosstermBackend;
 
@@ -21,66 +24,138 @@ use self::keys::Action;
 pub fn run_tui(config_path: &Path, cfg: Config) -> Result<()> {
     let mut app = App::new(join_with_config(&cfg)?);
 
-    enable_raw_mode()?;
+    let _guard = TerminalGuard::enter()?;
     let stdout = std::io::stdout();
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
     loop {
-        terminal.draw(|f| ui::draw(f, &app))?;
+        terminal.draw(|f| ui::draw(f, &mut app))?;
 
         if !event::poll(Duration::from_millis(200))? {
             continue;
         }
 
         if let Event::Key(key) = event::read()? {
-            match keys::map_key(key) {
+            match keys::map_key(key, app.mode, app.show_help) {
                 Action::Quit => break,
                 Action::Down => app.move_down(),
                 Action::Up => app.move_up(),
-                Action::Rescan => app.set_rows(join_with_config(&cfg)?),
-                Action::Term => {
-                    if let Some(row) = app.selected() {
-                        let _ = proc::kill::kill_record(
+                Action::PageDown => app.page_down(),
+                Action::PageUp => app.page_up(),
+                Action::Home => app.move_home(),
+                Action::End => app.move_end(),
+                Action::Rescan => match join_with_config(&cfg) {
+                    Ok(rows) => {
+                        app.set_rows(rows);
+                        app.set_status("Listener inventory refreshed.");
+                    }
+                    Err(err) => app.set_status(format!("Rescan failed: {err}")),
+                },
+                Action::SoftKill => {
+                    if let Some(row) = app.selected().cloned() {
+                        match proc::kill::kill_record(
                             &row.record,
                             Duration::from_millis(1500),
                             false,
-                        );
-                        app.set_rows(join_with_config(&cfg)?);
+                        ) {
+                            Ok(()) => match join_with_config(&cfg) {
+                                Ok(rows) => {
+                                    app.set_rows(rows);
+                                    app.set_status(format!(
+                                        "Sent graceful termination to port {} (pid {}).",
+                                        row.record.port, row.record.pid
+                                    ));
+                                }
+                                Err(err) => app
+                                    .set_status(format!("Process terminated, but refresh failed: {err}")),
+                            },
+                            Err(err) => app.set_status(format!(
+                                "Failed to terminate port {}: {err}",
+                                row.record.port
+                            )),
+                        }
+                    } else {
+                        app.set_status("No listener selected.");
                     }
                 }
-                Action::Kill => {
-                    if let Some(row) = app.selected() {
-                        let _ =
-                            proc::kill::kill_record(&row.record, Duration::from_millis(1), true);
-                        app.set_rows(join_with_config(&cfg)?);
+                Action::HardKill => {
+                    if let Some(row) = app.selected().cloned() {
+                        match proc::kill::kill_record(
+                            &row.record,
+                            Duration::from_millis(1),
+                            true,
+                        ) {
+                            Ok(()) => match join_with_config(&cfg) {
+                                Ok(rows) => {
+                                    app.set_rows(rows);
+                                    app.set_status(format!(
+                                        "Force killed port {} (pid {}).",
+                                        row.record.port, row.record.pid
+                                    ));
+                                }
+                                Err(err) => app
+                                    .set_status(format!("Process killed, but refresh failed: {err}")),
+                            },
+                            Err(err) => app.set_status(format!(
+                                "Failed to force kill port {}: {err}",
+                                row.record.port
+                            )),
+                        }
+                    } else {
+                        app.set_status("No listener selected.");
                     }
                 }
                 Action::Start => {
-                    if let Some(row) = app.selected()
+                    if let Some(row) = app.selected().cloned()
                         && let Some(name) = &row.service_name
                         && let Some(svc) = cfg.services.get(name)
                     {
-                        let _ = std::process::Command::new("zsh")
-                            .arg("-lc")
-                            .arg(svc.start.clone().unwrap_or_default())
-                            .current_dir(&svc.repo)
-                            .status();
-                        app.set_rows(join_with_config(&cfg)?);
+                        match crate::start_configured_service(svc) {
+                            Ok(()) => match join_with_config(&cfg) {
+                                Ok(rows) => {
+                                    app.set_rows(rows);
+                                    app.set_status(format!("Started service '{name}'."));
+                                }
+                                Err(err) => app
+                                    .set_status(format!("Service started, but refresh failed: {err}")),
+                            },
+                            Err(err) => app
+                                .set_status(format!("Failed to start service '{name}': {err}")),
+                        }
+                    } else {
+                        app.set_status("Selected row is not a configured service.");
                     }
                 }
-                Action::OpenConfig => {
-                    let _ = crate::open_config(config_path);
+                Action::OpenConfig => match crate::open_config(config_path) {
+                    Ok(()) => app.set_status(format!("Opened config {}", config_path.display())),
+                    Err(err) => app.set_status(format!("Failed to open config: {err}")),
+                },
+                Action::OpenService => {
+                    if let Some(row) = app.selected().cloned() {
+                        match crate::open_service_url(row.record.port) {
+                            Ok(url) => app.set_status(format!("Opened {url}")),
+                            Err(err) => app.set_status(format!(
+                                "Failed to open selected service on port {}: {err}",
+                                row.record.port
+                            )),
+                        }
+                    } else {
+                        app.set_status("No listener selected.");
+                    }
                 }
-                Action::Filter => {
-                    app.show_filter = !app.show_filter;
-                }
+                Action::StartFilter => app.start_filter(),
+                Action::ToggleHelp => app.toggle_help(),
+                Action::Backspace => app.pop_filter_char(),
+                Action::Input(ch) => app.push_filter_char(ch),
+                Action::Confirm => app.finish_filter(),
+                Action::Cancel => app.dismiss_overlay(),
                 Action::None => {}
             }
         }
     }
 
-    disable_raw_mode()?;
+    terminal.show_cursor()?;
     Ok(())
 }
 
@@ -97,4 +172,21 @@ fn join_with_config(cfg: &Config) -> Result<Vec<crate::scan::model::JoinedPortRe
             }
         })
         .collect())
+}
+
+struct TerminalGuard;
+
+impl TerminalGuard {
+    fn enter() -> Result<Self> {
+        enable_raw_mode()?;
+        execute!(std::io::stdout(), EnterAlternateScreen)?;
+        Ok(Self)
+    }
+}
+
+impl Drop for TerminalGuard {
+    fn drop(&mut self) {
+        let _ = disable_raw_mode();
+        let _ = execute!(std::io::stdout(), LeaveAlternateScreen);
+    }
 }

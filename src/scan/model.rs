@@ -21,7 +21,7 @@ pub struct JoinedPortRecord {
     pub record: ScanRecord,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ListenerRecord {
     pub port: u16,
     pub protocol: String,
