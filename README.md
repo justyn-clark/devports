@@ -22,6 +22,8 @@ Perfect for:
 - AI agents running services (Ace, etc.)
 - local homelabs
 
+<img width="1197" height="607" alt="devports-tui" src="https://github.com/user-attachments/assets/61c6a127-6ba0-4634-bb10-8af6a9a6bd24" />
+
 ## Install
 
 ```bash
