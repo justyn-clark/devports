@@ -9,7 +9,7 @@ use std::path::Path;
 use std::process::Command;
 use std::time::Duration;
 
-use anyhow::{Context, Result, anyhow, bail};
+use anyhow::{Context, Result, bail};
 use cli::{Commands, ConfigCommands};
 use config::{Config, ServiceConfig};
 use scan::model::{JoinedPortRecord, ScanRecord};
@@ -89,10 +89,7 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
         }
         Commands::Open { name } => {
             let cfg = Config::load(&config_path)?;
-            let svc = cfg
-                .services
-                .get(&name)
-                .ok_or_else(|| anyhow!("service not found"))?;
+            let svc = cfg.service(&name)?;
             let url = format!("http://{}:{}", default_host(), svc.port);
 
             open_target(&url)?;
