@@ -52,6 +52,71 @@ devports urls
 
 `devports urls` is the LAN/share surface. It prints hostname-based URLs for configured services and does not change what `open` launches locally.
 
+## How To Use
+
+1. Initialize the config.
+
+```bash
+devports config init
+```
+
+2. Add a service entry with a name, repo path, expected port, and start command.
+
+```bash
+devports config add web \
+  --repo ~/projects/web \
+  --port 3000 \
+  --start "vite --host 0.0.0.0 --port 3000"
+```
+
+3. Launch the service.
+
+```bash
+devports start web
+```
+
+This returns immediately and prints the local URL, process ID, and log path. Service output is written to `.devports/start.log` inside the configured repo.
+
+4. Open the running local app.
+
+```bash
+devports open web
+```
+
+This opens `http://127.0.0.1:<port>` only if that configured service is actually listening.
+
+5. Inspect runtime state.
+
+```bash
+devports list
+devports doctor
+devports scan
+```
+
+- `list` joins live listeners with configured services
+- `doctor` checks config quality and likely unmapped local dev listeners
+- `scan` prints the raw listener records
+
+6. Print LAN URLs when you want to open the app from another device.
+
+```bash
+devports urls
+devports urls --host 192.168.1.50
+```
+
+If no services are configured, `devports urls` prints an explicit message instead of failing silently.
+
+## Real Example
+
+For `/Users/justin/Documents/Justyn Clark Network/REPOS/jcn-studio-mcp`, the repo already defines a root `dev` script that runs the web app, and the Vite config sets port `4321`. A working config entry for that project is:
+
+```bash
+devports config add jcn-studio-web \
+  --repo "/Users/justin/Documents/Justyn Clark Network/REPOS/jcn-studio-mcp" \
+  --port 4321 \
+  --start "pnpm dev"
+```
+
 ## Commands
 
 ```bash
