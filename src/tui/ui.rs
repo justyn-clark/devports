@@ -159,8 +159,12 @@ fn details_text(app: &App) -> Text<'static> {
     lines.push(Line::from(format!("Protocol: {}", row.record.protocol)));
     lines.push(Line::from(format!("Command: {}", row.record.command)));
     lines.push(Line::from(format!(
-        "URL: {}",
-        crate::service_url(row.record.port)
+        "Local URL: {}",
+        crate::local_service_url(row.record.port)
+    )));
+    lines.push(Line::from(format!(
+        "LAN URL: {}",
+        crate::lan_service_url(row.record.port)
     )));
     lines.push(Line::from(format!(
         "Repo root: {}",

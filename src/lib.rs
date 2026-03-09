@@ -90,7 +90,16 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
         Commands::Open { name } => {
             let cfg = Config::load(&config_path)?;
             let svc = cfg.service(&name)?;
-            let url = format!("http://{}:{}", default_host(), svc.port);
+            let is_listening = scan::scan_listeners()?
+                .iter()
+                .any(|record| record.port == svc.port);
+            if !is_listening {
+                bail!(
+                    "service '{name}' is configured for {} but is not listening",
+                    service_url(svc.port)
+                );
+            }
+            let url = service_url(svc.port);
 
             open_target(&url)?;
             println!("opened {}", url);
@@ -174,8 +183,16 @@ pub(crate) fn default_host() -> String {
         .to_string()
 }
 
-pub(crate) fn service_url(port: u16) -> String {
+pub(crate) fn local_service_url(port: u16) -> String {
+    format!("http://127.0.0.1:{port}")
+}
+
+pub(crate) fn lan_service_url(port: u16) -> String {
     format!("http://{}:{}", default_host(), port)
+}
+
+pub(crate) fn service_url(port: u16) -> String {
+    local_service_url(port)
 }
 
 pub(crate) fn open_service_url(port: u16) -> Result<String> {
@@ -215,4 +232,23 @@ pub fn open_config(path: &Path) -> Result<()> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{lan_service_url, local_service_url, service_url};
+
+    #[test]
+    fn service_url_defaults_to_local_loopback() {
+        assert_eq!(service_url(5173), "http://127.0.0.1:5173");
+        assert_eq!(local_service_url(3000), "http://127.0.0.1:3000");
+    }
+
+    #[test]
+    fn lan_service_url_keeps_hostname_urls_available() {
+        let url = lan_service_url(4173);
+
+        assert!(url.starts_with("http://"));
+        assert!(url.ends_with(":4173"));
+    }
 }
