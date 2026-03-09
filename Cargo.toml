@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/justyn-clark/devports"
 homepage = "https://github.com/justyn-clark/devports"
-exclude = [".small/**", "AGENTS.md"]
+exclude = [".small/**", ".github/**", "AGENTS.md", "packages/**", "scripts/**"]
 
 [[bin]]
 name = "devports"

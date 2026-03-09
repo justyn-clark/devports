@@ -28,3 +28,15 @@ tasks:
     - id: task-9
       title: Run tests/checks and finalize handoff
       status: completed
+    - id: task-10
+      title: Inspect SMALL reference packaging and installer implementation
+      status: completed
+    - id: task-11
+      title: Add devports release packaging for Homebrew tap, Scoop, npm wrapper, and curl installer
+      status: completed
+    - id: task-12
+      title: Document installation and release verification flows
+      status: completed
+    - id: task-13
+      title: Validate release packaging and refresh SMALL handoff
+      status: completed

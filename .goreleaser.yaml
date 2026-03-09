@@ -1,0 +1,108 @@
+version: 2
+
+project_name: devports
+
+builds:
+  - id: devports
+    builder: rust
+    binary: devports
+    targets:
+      - x86_64-unknown-linux-gnu
+      - aarch64-unknown-linux-gnu
+      - x86_64-apple-darwin
+      - aarch64-apple-darwin
+      - x86_64-pc-windows-gnu
+
+archives:
+  - id: devports
+    ids:
+      - devports
+    formats:
+      - tar.gz
+    name_template: >-
+      devports-{{ .Tag }}-{{ .Os }}-{{ .Arch }}
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: checksums.txt
+
+snapshot:
+  version_template: "{{ .Version }}-dev+{{ .ShortCommit }}"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+
+release:
+  github:
+    owner: justyn-clark
+    name: devports
+  draft: false
+  prerelease: auto
+  mode: replace
+  header: |
+    ## devports {{ .Tag }}
+
+    Install with curl:
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash
+    ```
+
+    Install with npm:
+    ```bash
+    npm i -g @justyn-clark/devports
+    ```
+
+brews:
+  - name: devports
+    ids:
+      - devports
+    repository:
+      owner: justyn-clark
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/justyn-clark/devports"
+    description: "CLI for managing local development ports and configured service URLs"
+    license: "MIT"
+    commit_author:
+      name: github-actions[bot]
+      email: github-actions[bot]@users.noreply.github.com
+    test: |
+      system "#{bin}/devports", "--version"
+    install: |
+      bin.install "devports"
+
+scoops:
+  - name: devports
+    ids:
+      - devports
+    repository:
+      owner: justyn-clark
+      name: scoop-bucket
+      branch: main
+      token: "{{ .Env.SCOOP_BUCKET_TOKEN }}"
+    directory: bucket
+    homepage: "https://github.com/justyn-clark/devports"
+    description: "CLI for managing local development ports and configured service URLs"
+    license: "MIT"
+    commit_author:
+      name: github-actions[bot]
+      email: github-actions[bot]@users.noreply.github.com
+    url_template: "https://github.com/justyn-clark/devports/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
