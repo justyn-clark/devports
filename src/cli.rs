@@ -87,7 +87,7 @@ pub enum Commands {
         timeout_ms: u64,
     },
     #[command(
-        about = "Start a configured service",
+        about = "Launch a configured service",
         long_about = "Launch a configured service from its repository root in the background after verifying that the configured port is available.",
         after_help = "Examples:\n  devports start web"
     )]

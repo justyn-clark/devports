@@ -2,18 +2,17 @@
 
 devports is a lightweight CLI for managing local development ports.
 
-It helps developers track which services should run on which ports, kill stuck processes, and expose LAN URLs so development servers are reachable across the network.
+It helps developers track configured services, inspect running listeners, terminate stuck processes by port, launch configured apps, open running local apps in the browser, and print LAN-friendly URLs for other devices on the network.
 
 ## Key features
 
 - Track configured services and expected ports
 - Detect running listeners via lsof
 - Kill stuck processes by port
-- Start services from configured repositories
-- Show LAN-accessible URLs
-- Open services directly in the browser
+- Launch services from configured repositories in the background
+- Show LAN-accessible URLs for configured services
+- Open running local services directly in the browser
 - Optional terminal UI
-- Works great with tmux and multi-service dev environments
 
 ## Example usage
 
@@ -29,7 +28,7 @@ devports start web
 devports list
 devports urls
 devports open web
-devports kill 3000
+devports kill --port 3000
 ```
 
 ## Installation
