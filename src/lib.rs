@@ -95,6 +95,11 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
             let mut services = cfg.services.iter().collect::<Vec<_>>();
             services.sort_by(|(a, _), (b, _)| a.cmp(b));
 
+            if services.is_empty() {
+                println!("no configured services; add one with `devports config add <name> --repo <path> --port <port>`");
+                return Ok(());
+            }
+
             for (name, svc) in services {
                 let running = records.iter().find(|r| r.port == svc.port);
                 let status = if running.is_some() { "LISTEN" } else { "DOWN" };
