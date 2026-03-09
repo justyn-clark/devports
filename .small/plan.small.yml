@@ -27,4 +27,4 @@ tasks:
       status: completed
     - id: task-9
       title: Run tests/checks and finalize handoff
-      status: blocked
+      status: completed

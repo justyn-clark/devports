@@ -124,3 +124,15 @@ entries:
       status: blocked
       task_id: task-9
       timestamp: "2026-02-13T22:03:01.211401000Z"
+    - evidence: 'Reconciled SMALL state after post-plan execution completed outside the SMALL CLI: task-9 validation succeeded, documentation was tightened, UX issues were fixed, package metadata was added, crate packaging verified, and Git tag/release v0.1.0 were published.'
+      notes: Original blocker was a transient sandbox/DNS limitation during an earlier run. Actual completion happened later and is now being recorded canonically via SMALL CLI.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: meta/reconcile-plan
+      timestamp: "2026-03-09T01:51:42.524773000Z"
+    - evidence: 'Completed validation and release-finalization: cargo test passed, cargo package verified, every devports --help surface was run, runtime command paths were exercised, README/CHANGELOG/help text were aligned to code, and release v0.1.0 was tagged and published.'
+      notes: This supersedes the earlier blocked state recorded on 2026-02-13.
+      replayId: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
+      status: completed
+      task_id: task-9
+      timestamp: "2026-03-09T01:51:42.527983000Z"
