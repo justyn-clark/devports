@@ -5,14 +5,21 @@ pub mod render;
 pub mod scan;
 pub mod tui;
 
+use std::fs::{self, OpenOptions};
 use std::path::Path;
-use std::process::Command;
+use std::process::{Command, Stdio};
+use std::thread;
 use std::time::Duration;
 
 use anyhow::{Context, Result, bail};
 use cli::{Commands, ConfigCommands};
 use config::{Config, ServiceConfig};
 use scan::model::{JoinedPortRecord, ScanRecord};
+
+pub(crate) struct StartedService {
+    pub pid: u32,
+    pub log_path: std::path::PathBuf,
+}
 
 pub fn execute(cli: cli::Cli) -> Result<()> {
     let config_path = cli
@@ -58,7 +65,14 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
         Commands::Start { service } => {
             let cfg = Config::load(&config_path)?;
             let svc = cfg.service(&service)?;
-            start_configured_service(svc)?;
+            let launched = start_configured_service(svc)?;
+            println!(
+                "launched '{}' at {} (pid {}, log {})",
+                service,
+                service_url(svc.port),
+                launched.pid,
+                launched.log_path.display()
+            );
         }
         Commands::Doctor => {
             let cfg = Config::load(&config_path)?;
@@ -151,12 +165,12 @@ pub(crate) fn ensure_port_available(port: u16) -> Result<()> {
     Ok(())
 }
 
-pub(crate) fn start_configured_service(service: &ServiceConfig) -> Result<()> {
+pub(crate) fn start_configured_service(service: &ServiceConfig) -> Result<StartedService> {
     ensure_port_available(service.port)?;
     start_service(service)
 }
 
-pub(crate) fn start_service(service: &ServiceConfig) -> Result<()> {
+pub(crate) fn start_service(service: &ServiceConfig) -> Result<StartedService> {
     let start = service
         .start
         .as_deref()
@@ -166,14 +180,40 @@ pub(crate) fn start_service(service: &ServiceConfig) -> Result<()> {
         bail!("repo does not exist: {}", service.repo.display());
     }
 
+    let log_path = start_log_path(service)?;
+    let stdout = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&log_path)
+        .with_context(|| format!("failed to open start log {}", log_path.display()))?;
+    let stderr = stdout
+        .try_clone()
+        .with_context(|| format!("failed to clone start log handle {}", log_path.display()))?;
+
     let mut cmd = Command::new("zsh");
-    cmd.arg("-lc").arg(start).current_dir(&service.repo);
-    let status = cmd.status().context("failed to execute start command")?;
-    if !status.success() {
-        bail!("start command exited with {status}");
+    cmd.arg("-lc")
+        .arg(start)
+        .current_dir(&service.repo)
+        .stdin(Stdio::null())
+        .stdout(Stdio::from(stdout))
+        .stderr(Stdio::from(stderr));
+
+    let mut child = cmd.spawn().context("failed to launch start command")?;
+    let pid = child.id();
+
+    thread::sleep(Duration::from_millis(150));
+    if let Some(status) = child
+        .try_wait()
+        .context("failed while checking launched service")?
+        && !status.success()
+    {
+        bail!(
+            "start command exited immediately with {status}; see {}",
+            log_path.display()
+        );
     }
 
-    Ok(())
+    Ok(StartedService { pid, log_path })
 }
 
 pub(crate) fn default_host() -> String {
@@ -234,9 +274,19 @@ pub fn open_config(path: &Path) -> Result<()> {
     Ok(())
 }
 
+fn start_log_path(service: &ServiceConfig) -> Result<std::path::PathBuf> {
+    let log_dir = service.repo.join(".devports");
+    fs::create_dir_all(&log_dir)
+        .with_context(|| format!("failed to create log dir {}", log_dir.display()))?;
+    Ok(log_dir.join("start.log"))
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{lan_service_url, local_service_url, service_url};
+    use super::{ServiceConfig, lan_service_url, local_service_url, service_url, start_service};
+    use std::fs;
+    use std::thread;
+    use std::time::{Duration, Instant};
 
     #[test]
     fn service_url_defaults_to_local_loopback() {
@@ -250,5 +300,38 @@ mod tests {
 
         assert!(url.starts_with("http://"));
         assert!(url.ends_with(":4173"));
+    }
+
+    #[test]
+    fn start_service_launches_in_background() {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let repo = dir.path().join("repo");
+        fs::create_dir_all(&repo).expect("create repo");
+        let output = dir.path().join("started.txt");
+        let service = ServiceConfig {
+            repo: repo.clone(),
+            port: 45555,
+            start: Some(format!("sleep 1; echo started > {}", output.display())),
+            tags: vec![],
+        };
+
+        let started_at = Instant::now();
+        let launched = start_service(&service).expect("launch service");
+
+        assert!(
+            started_at.elapsed() < Duration::from_millis(900),
+            "start should return quickly for background launches"
+        );
+        assert!(launched.pid > 0);
+        assert_eq!(launched.log_path, repo.join(".devports").join("start.log"));
+
+        for _ in 0..30 {
+            if output.exists() {
+                break;
+            }
+            thread::sleep(Duration::from_millis(100));
+        }
+
+        assert!(output.exists(), "background start command did not complete");
     }
 }

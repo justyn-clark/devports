@@ -88,7 +88,7 @@ pub enum Commands {
     },
     #[command(
         about = "Start a configured service",
-        long_about = "Start a configured service from its repository root after verifying that the configured port is available.",
+        long_about = "Launch a configured service from its repository root in the background after verifying that the configured port is available.",
         after_help = "Examples:\n  devports start web"
     )]
     Start {
@@ -97,7 +97,7 @@ pub enum Commands {
     },
     #[command(
         about = "Validate config and runtime state",
-        long_about = "Check the configured service registry for missing repos, missing start commands, duplicate ports, and unmapped runtime listeners.",
+        long_about = "Check the configured service registry for missing repos, missing start commands, duplicate ports, and likely local dev listeners that are not mapped in config.",
         after_help = "Examples:\n  devports doctor\n  devports doctor --json\n\nExit status:\n  Returns non-zero when the report contains errors."
     )]
     Doctor,

@@ -161,6 +161,9 @@ pub mod doctor {
             if configured_ports.contains(&record.port) {
                 continue;
             }
+            if !is_probably_local_dev_listener(record) {
+                continue;
+            }
             issues.push(DoctorIssue {
                 level: "warn".to_string(),
                 code: "unmapped_listener".to_string(),
@@ -172,5 +175,25 @@ pub mod doctor {
         }
 
         DoctorReport { issues }
+    }
+
+    fn is_probably_local_dev_listener(record: &ScanRecord) -> bool {
+        if record.port < 1024 {
+            return false;
+        }
+
+        if record.repo_root.is_some() {
+            return true;
+        }
+
+        let Some(cwd) = record.cwd.as_deref() else {
+            return false;
+        };
+
+        let Some(home) = std::env::var_os("HOME") else {
+            return false;
+        };
+
+        cwd.starts_with(Path::new(&home))
     }
 }

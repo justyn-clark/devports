@@ -112,16 +112,20 @@ pub fn run_tui(config_path: &Path, cfg: Config) -> Result<()> {
                         && let Some(svc) = cfg.services.get(name)
                     {
                         match crate::start_configured_service(svc) {
-                            Ok(()) => match join_with_config(&cfg) {
+                            Ok(launched) => match join_with_config(&cfg) {
                                 Ok(rows) => {
                                     app.set_rows(rows);
-                                    app.set_status(format!("Started service '{name}'."));
+                                    app.set_status(format!(
+                                        "Launched '{name}' at {} (pid {}).",
+                                        crate::service_url(svc.port),
+                                        launched.pid
+                                    ));
                                 }
                                 Err(err) => app
-                                    .set_status(format!("Service started, but refresh failed: {err}")),
+                                    .set_status(format!("Service launched, but refresh failed: {err}")),
                             },
                             Err(err) => app
-                                .set_status(format!("Failed to start service '{name}': {err}")),
+                                .set_status(format!("Failed to launch service '{name}': {err}")),
                         }
                     } else {
                         app.set_status("Selected row is not a configured service.");
