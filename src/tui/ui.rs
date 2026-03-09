@@ -2,9 +2,7 @@ use ratatui::Frame;
 use ratatui::layout::{Alignment, Constraint, Direction, Flex, Layout, Rect};
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Text};
-use ratatui::widgets::{
-    Block, Borders, Cell, Clear, Paragraph, Row, Table, Wrap,
-};
+use ratatui::widgets::{Block, Borders, Cell, Clear, Paragraph, Row, Table, Wrap};
 
 use super::app::App;
 
@@ -78,7 +76,7 @@ pub fn draw(frame: &mut Frame<'_>, app: &mut App) {
     frame.render_widget(details, body[1]);
 
     let controls = Paragraph::new(
-        "Enter open | k term | K kill | s start | r rescan | e config | o open | / filter | ? help | q quit",
+        "o open | k term | K kill | s start | r rescan | e config | / filter | ? help | q quit",
     )
     .block(Block::default().borders(Borders::ALL).title("Controls"))
     .wrap(Wrap { trim: true });
@@ -105,7 +103,11 @@ pub fn draw(frame: &mut Frame<'_>, app: &mut App) {
         let area = centered_rect(74, 60, frame.area());
         frame.render_widget(Clear, area);
         let help = Paragraph::new(help_overlay())
-            .block(Block::default().title("Keyboard Help").borders(Borders::ALL))
+            .block(
+                Block::default()
+                    .title("Keyboard Help")
+                    .borders(Borders::ALL),
+            )
             .wrap(Wrap { trim: false })
             .alignment(Alignment::Left);
         frame.render_widget(help, area);
@@ -122,13 +124,21 @@ fn match_label(row: &crate::scan::model::JoinedPortRecord) -> &'static str {
 
 fn selected_line(app: &App) -> String {
     app.selected()
-        .map(|row| format!("selected {}:{}", row.service_name.as_deref().unwrap_or("-"), row.record.port))
+        .map(|row| {
+            format!(
+                "selected {}:{}",
+                row.service_name.as_deref().unwrap_or("-"),
+                row.record.port
+            )
+        })
         .unwrap_or_else(|| "selected none".to_string())
 }
 
 fn details_text(app: &App) -> Text<'static> {
     let Some(row) = app.selected() else {
-        return Text::from("No listeners match the current view.\n\nPress / to filter or r to rescan.");
+        return Text::from(
+            "No listeners match the current view.\n\nPress / to filter or r to rescan.",
+        );
     };
 
     let mut lines = Vec::new();
@@ -179,7 +189,7 @@ fn help_overlay() -> Text<'static> {
         Line::from("  PageUp/PageDown    Move by larger steps"),
         Line::from(""),
         Line::from("Actions"),
-        Line::from("  Enter or o         Open selected service URL"),
+        Line::from("  o                  Open selected service URL"),
         Line::from("  k                  Graceful terminate selected listener"),
         Line::from("  K                  Force kill selected listener"),
         Line::from("  s                  Start the selected configured service"),

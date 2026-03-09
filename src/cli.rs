@@ -66,7 +66,7 @@ pub enum Commands {
     #[command(
         about = "Open the interactive terminal interface",
         long_about = "Launch the full-screen terminal UI for browsing listeners, filtering results, starting services, killing processes, and opening service URLs.",
-        after_help = "Examples:\n  devports tui\n\nKey flows:\n  Arrows/Home/End/PageUp/PageDown navigate\n  Enter opens the selected service URL\n  / filters the table, ? shows the full keymap"
+        after_help = "Examples:\n  devports tui\n\nKey flows:\n  Arrows/Home/End/PageUp/PageDown navigate\n  o opens the selected service URL\n  / filters the table, ? shows the full keymap"
     )]
     Tui,
     #[command(

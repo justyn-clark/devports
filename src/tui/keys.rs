@@ -29,9 +29,11 @@ pub enum Action {
 pub fn map_key(key: KeyEvent, mode: InputMode, show_help: bool) -> Action {
     if show_help {
         return match key.code {
-            KeyCode::Esc | KeyCode::Enter | KeyCode::Char('q') | KeyCode::Char('?') | KeyCode::F(1) => {
-                Action::Cancel
-            }
+            KeyCode::Esc
+            | KeyCode::Enter
+            | KeyCode::Char('q')
+            | KeyCode::Char('?')
+            | KeyCode::F(1) => Action::Cancel,
             _ => Action::None,
         };
     }
@@ -52,7 +54,7 @@ pub fn map_key(key: KeyEvent, mode: InputMode, show_help: bool) -> Action {
         KeyCode::Char('K') => Action::HardKill,
         KeyCode::Char('s') => Action::Start,
         KeyCode::Char('e') => Action::OpenConfig,
-        KeyCode::Char('o') | KeyCode::Enter => Action::OpenService,
+        KeyCode::Char('o') => Action::OpenService,
         KeyCode::Char('/') => Action::StartFilter,
         KeyCode::Char('?') | KeyCode::F(1) => Action::ToggleHelp,
         KeyCode::Down | KeyCode::Char('j') => Action::Down,
@@ -65,5 +67,32 @@ pub fn map_key(key: KeyEvent, mode: InputMode, show_help: bool) -> Action {
         KeyCode::Char('u') if key.modifiers.contains(KeyModifiers::CONTROL) => Action::PageUp,
         KeyCode::Esc => Action::Cancel,
         _ => Action::None,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn enter_does_not_open_service_in_normal_mode() {
+        let action = map_key(
+            KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE),
+            InputMode::Normal,
+            false,
+        );
+
+        assert_eq!(action, Action::None);
+    }
+
+    #[test]
+    fn o_opens_service_in_normal_mode() {
+        let action = map_key(
+            KeyEvent::new(KeyCode::Char('o'), KeyModifiers::NONE),
+            InputMode::Normal,
+            false,
+        );
+
+        assert_eq!(action, Action::OpenService);
     }
 }

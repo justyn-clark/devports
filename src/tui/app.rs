@@ -27,7 +27,7 @@ impl App {
             filter: String::new(),
             mode: InputMode::Normal,
             show_help: false,
-            status: "Arrows navigate. Enter opens the selected service. ? shows all controls."
+            status: "Arrows navigate. Press o to open the selected service. ? shows all controls."
                 .to_string(),
         };
         app.apply_filter();
@@ -40,7 +40,8 @@ impl App {
     }
 
     pub fn selected(&self) -> Option<&JoinedPortRecord> {
-        self.selected_row_index().and_then(|index| self.rows.get(index))
+        self.selected_row_index()
+            .and_then(|index| self.rows.get(index))
     }
 
     pub fn move_down(&mut self) {
@@ -149,7 +150,11 @@ impl App {
             .collect();
 
         let next_position = current_row
-            .and_then(|index| self.filtered_indices.iter().position(|candidate| *candidate == index))
+            .and_then(|index| {
+                self.filtered_indices
+                    .iter()
+                    .position(|candidate| *candidate == index)
+            })
             .or_else(|| (!self.filtered_indices.is_empty()).then_some(0));
 
         self.select_position(next_position);
@@ -181,7 +186,7 @@ impl App {
     fn filter_status(&self) -> String {
         if self.filter.trim().is_empty() {
             format!(
-                "{} listeners loaded. Enter opens service URLs, / starts filtering.",
+                "{} listeners loaded. Press o to open service URLs, / starts filtering.",
                 self.total_count()
             )
         } else {
