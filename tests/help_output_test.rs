@@ -22,9 +22,7 @@ fn root_help_includes_banner_and_examples() {
 fn doctor_help_includes_guidance_and_exit_status() {
     let mut command = Cli::command();
     let help = {
-        let doctor = command
-            .find_subcommand_mut("doctor")
-            .expect("doctor subcommand");
+        let doctor = command.find_subcommand_mut("doctor").expect("doctor subcommand");
         render_help(doctor)
     };
 
