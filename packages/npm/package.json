@@ -1,6 +1,6 @@
 {
   "name": "@justyn-clark/devports",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "npm wrapper for the devports CLI",
   "license": "MIT",
   "repository": {

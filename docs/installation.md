@@ -26,7 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/
 Install a specific version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash -s -- --version v0.1.0
+curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash -s -- --version v0.1.1
 ```
 
 Install behavior:
