@@ -34,9 +34,14 @@ fn parse_line(line: &str) -> Option<ListenerRecord> {
 }
 
 pub fn run_lsof() -> Result<Vec<ListenerRecord>> {
-    let out = std::process::Command::new("lsof")
+    let out = match std::process::Command::new("lsof")
         .args(["-nP", "-iTCP", "-sTCP:LISTEN"])
-        .output()?;
+        .output()
+    {
+        Ok(out) => out,
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
+        Err(err) => return Err(err.into()),
+    };
 
     if !out.status.success() {
         return Ok(vec![]);

@@ -3,7 +3,11 @@ use anyhow::Result;
 use super::model::ListenerRecord;
 
 pub fn run_ss() -> Result<Vec<ListenerRecord>> {
-    let out = std::process::Command::new("ss").args(["-lptn"]).output()?;
+    let out = match std::process::Command::new("ss").args(["-lptn"]).output() {
+        Ok(out) => out,
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
+        Err(err) => return Err(err.into()),
+    };
 
     if !out.status.success() {
         return Ok(vec![]);

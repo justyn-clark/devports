@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to publish, e.g. v0.1.0"
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -16,6 +22,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref_name }}
 
       - name: Set up Node
         uses: actions/setup-node@v6
@@ -29,7 +37,7 @@ jobs:
       - name: Verify npm package version matches tag
         run: |
           set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
           PKG_VERSION="$(node -p "require('./packages/npm/package.json').version")"
           if [ "v${PKG_VERSION}" != "${TAG}" ]; then
             echo "Tag ${TAG} does not match packages/npm/package.json version ${PKG_VERSION}"
