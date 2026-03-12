@@ -23,7 +23,7 @@ cargo install --git https://github.com/justyn-clark/devports
 
 Other install paths:
 
-- npm: `npm i -g @justyn-clark/devports`
+- npm: `npm i -g @justynclark/devports`
 - curl: `curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash`
 - Homebrew and Scoop instructions: [docs/installation.md](docs/installation.md)
 

@@ -26,7 +26,7 @@ curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/
 Install a specific version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash -s -- --version v0.1.1
+curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash -s -- --version v0.1.2
 ```
 
 Install behavior:
@@ -47,7 +47,7 @@ Optional flags:
 ## Option 2: npm global install
 
 ```bash
-npm i -g @justyn-clark/devports
+npm i -g @justynclark/devports
 devports --version
 ```
 
