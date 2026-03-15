@@ -2,6 +2,14 @@
 
 All notable changes to this project should be documented in this file.
 
+## [0.1.3] - Improve npm package presentation
+
+### Changed
+
+- Upgraded npm package description, keywords, homepage, and issue metadata
+- Rewrote npm README to better explain the product, workflow, and value
+- Polished the npm package page so the published listing is clearer and more compelling
+
 ## [0.1.0] - Initial release
 
 ### Added

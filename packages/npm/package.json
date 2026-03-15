@@ -1,7 +1,25 @@
 {
   "name": "@justynclark/devports",
-  "version": "0.1.2",
-  "description": "npm wrapper for the devports CLI",
+  "version": "0.1.3",
+  "description": "CLI for tracking local dev services, opening live apps, and sharing LAN-ready URLs.",
+  "keywords": [
+    "devports",
+    "developer-tools",
+    "local-development",
+    "ports",
+    "cli",
+    "service-manager",
+    "vite",
+    "nextjs",
+    "remix",
+    "localhost",
+    "lan",
+    "tui"
+  ],
+  "homepage": "https://github.com/justyn-clark/devports",
+  "bugs": {
+    "url": "https://github.com/justyn-clark/devports/issues"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
