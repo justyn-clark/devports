@@ -91,20 +91,5 @@ brews:
     install: |
       bin.install "devports"
 
-scoops:
-  - name: devports
-    ids:
-      - devports
-    repository:
-      owner: justyn-clark
-      name: scoop-bucket
-      branch: main
-      token: "{{ .Env.SCOOP_BUCKET_TOKEN }}"
-    directory: bucket
-    homepage: "https://github.com/justyn-clark/devports"
-    description: "CLI for managing local development ports and configured service URLs"
-    license: "MIT"
-    commit_author:
-      name: github-actions[bot]
-      email: github-actions[bot]@users.noreply.github.com
-    url_template: "https://github.com/justyn-clark/devports/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+# Scoop publication is temporarily disabled while Windows packaging is disabled.
+# Re-enable together with a working Windows build artifact path.
