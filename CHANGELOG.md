@@ -2,6 +2,13 @@
 
 All notable changes to this project should be documented in this file.
 
+## [0.1.5] - Align release version and supported surfaces
+
+### Fixed
+
+- Realigned Cargo, npm, and tag versioning after the failed `v0.1.5` publish mismatch
+- Kept release documentation aligned with the currently supported macOS/Linux publish surfaces
+
 ## [0.1.4] - Stabilize release CI and refresh release surfaces
 
 ### Fixed

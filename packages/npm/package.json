@@ -1,6 +1,6 @@
 {
   "name": "@justynclark/devports",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "CLI for tracking local dev services, opening live apps, and sharing LAN-ready URLs.",
   "keywords": [
     "devports",
