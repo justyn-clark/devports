@@ -41,6 +41,14 @@ jobs:
       - name: Run tests
         run: cargo test
 
+      - name: Clear existing release on manual reruns
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          gh release delete "$TAG" --repo "$GITHUB_REPOSITORY" --yes || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
