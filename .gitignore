@@ -25,6 +25,7 @@ target
 
 /target
 .small-cache/
+.zig-cache/
 
 # JCN universal secrets policy
 .env
