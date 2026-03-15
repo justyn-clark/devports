@@ -31,7 +31,7 @@ jobs:
           targets: x86_64-unknown-linux-gnu,aarch64-unknown-linux-gnu,x86_64-apple-darwin,aarch64-apple-darwin,x86_64-pc-windows-gnu
 
       - name: Set up Zig
-        uses: goto-bus-stop/setup-zig@v2
+        uses: mlugg/setup-zig@v2
 
       - name: Install cargo-zigbuild
         uses: taiki-e/install-action@v2
