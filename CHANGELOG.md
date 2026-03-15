@@ -2,6 +2,18 @@
 
 All notable changes to this project should be documented in this file.
 
+## [0.1.4] - Stabilize release CI and refresh release surfaces
+
+### Fixed
+
+- Made service startup shell spawning portable across macOS, Linux, and Windows command launch paths
+- Replaced the flaky background launch timing test with a deterministic handshake-based test for CI
+- Unblocked GitHub Release builds on Ubuntu runners by removing the hard dependency on `zsh`
+
+### Changed
+
+- Refreshed release-facing package and install metadata so published surfaces stay aligned with the current package identity and install paths
+
 ## [0.1.3] - Improve npm package presentation
 
 ### Changed

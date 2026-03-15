@@ -6,8 +6,8 @@ use std::path::Path;
 use std::time::Duration;
 
 use anyhow::Result;
-use crossterm::execute;
 use crossterm::event::{self, Event};
+use crossterm::execute;
 use crossterm::terminal::{
     EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode,
 };
@@ -67,8 +67,9 @@ pub fn run_tui(config_path: &Path, cfg: Config) -> Result<()> {
                                         row.record.port, row.record.pid
                                     ));
                                 }
-                                Err(err) => app
-                                    .set_status(format!("Process terminated, but refresh failed: {err}")),
+                                Err(err) => app.set_status(format!(
+                                    "Process terminated, but refresh failed: {err}"
+                                )),
                             },
                             Err(err) => app.set_status(format!(
                                 "Failed to terminate port {}: {err}",
@@ -81,11 +82,7 @@ pub fn run_tui(config_path: &Path, cfg: Config) -> Result<()> {
                 }
                 Action::HardKill => {
                     if let Some(row) = app.selected().cloned() {
-                        match proc::kill::kill_record(
-                            &row.record,
-                            Duration::from_millis(1),
-                            true,
-                        ) {
+                        match proc::kill::kill_record(&row.record, Duration::from_millis(1), true) {
                             Ok(()) => match join_with_config(&cfg) {
                                 Ok(rows) => {
                                     app.set_rows(rows);
@@ -94,8 +91,9 @@ pub fn run_tui(config_path: &Path, cfg: Config) -> Result<()> {
                                         row.record.port, row.record.pid
                                     ));
                                 }
-                                Err(err) => app
-                                    .set_status(format!("Process killed, but refresh failed: {err}")),
+                                Err(err) => app.set_status(format!(
+                                    "Process killed, but refresh failed: {err}"
+                                )),
                             },
                             Err(err) => app.set_status(format!(
                                 "Failed to force kill port {}: {err}",
@@ -121,11 +119,13 @@ pub fn run_tui(config_path: &Path, cfg: Config) -> Result<()> {
                                         launched.pid
                                     ));
                                 }
-                                Err(err) => app
-                                    .set_status(format!("Service launched, but refresh failed: {err}")),
+                                Err(err) => app.set_status(format!(
+                                    "Service launched, but refresh failed: {err}"
+                                )),
                             },
-                            Err(err) => app
-                                .set_status(format!("Failed to launch service '{name}': {err}")),
+                            Err(err) => {
+                                app.set_status(format!("Failed to launch service '{name}': {err}"))
+                            }
                         }
                     } else {
                         app.set_status("Selected row is not a configured service.");
