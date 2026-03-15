@@ -96,7 +96,9 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
             services.sort_by(|(a, _), (b, _)| a.cmp(b));
 
             if services.is_empty() {
-                println!("no configured services; add one with `devports config add <name> --repo <path> --port <port>`");
+                println!(
+                    "no configured services; add one with `devports config add <name> --repo <path> --port <port>`"
+                );
                 return Ok(());
             }
 
@@ -195,10 +197,8 @@ pub(crate) fn start_service(service: &ServiceConfig) -> Result<StartedService> {
         .try_clone()
         .with_context(|| format!("failed to clone start log handle {}", log_path.display()))?;
 
-    let mut cmd = Command::new("zsh");
-    cmd.arg("-lc")
-        .arg(start)
-        .current_dir(&service.repo)
+    let mut cmd = shell_command(start);
+    cmd.current_dir(&service.repo)
         .stdin(Stdio::null())
         .stdout(Stdio::from(stdout))
         .stderr(Stdio::from(stderr));
@@ -219,6 +219,42 @@ pub(crate) fn start_service(service: &ServiceConfig) -> Result<StartedService> {
     }
 
     Ok(StartedService { pid, log_path })
+}
+
+fn shell_command(command: &str) -> Command {
+    #[cfg(windows)]
+    {
+        let mut cmd = Command::new("cmd");
+        cmd.arg("/C").arg(command);
+        cmd
+    }
+
+    #[cfg(not(windows))]
+    {
+        for shell in ["zsh", "bash"] {
+            if shell_exists(shell) {
+                let mut cmd = Command::new(shell);
+                cmd.arg("-lc").arg(command);
+                return cmd;
+            }
+        }
+
+        let mut cmd = Command::new("sh");
+        cmd.arg("-c").arg(command);
+        cmd
+    }
+}
+
+#[cfg(not(windows))]
+fn shell_exists(shell: &str) -> bool {
+    std::env::var_os("PATH")
+        .map(|paths| {
+            std::env::split_paths(&paths).any(|path| {
+                let candidate = path.join(shell);
+                candidate.is_file()
+            })
+        })
+        .unwrap_or(false)
 }
 
 pub(crate) fn default_host() -> String {
@@ -291,7 +327,7 @@ mod tests {
     use super::{ServiceConfig, lan_service_url, local_service_url, service_url, start_service};
     use std::fs;
     use std::thread;
-    use std::time::{Duration, Instant};
+    use std::time::Duration;
 
     #[test]
     fn service_url_defaults_to_local_loopback() {
@@ -312,23 +348,40 @@ mod tests {
         let dir = tempfile::tempdir().expect("tempdir");
         let repo = dir.path().join("repo");
         fs::create_dir_all(&repo).expect("create repo");
+        let ready = dir.path().join("ready.txt");
+        let release = dir.path().join("release.txt");
         let output = dir.path().join("started.txt");
         let service = ServiceConfig {
             repo: repo.clone(),
             port: 45555,
-            start: Some(format!("sleep 1; echo started > {}", output.display())),
+            start: Some(format!(
+                "echo ready > {}; while [ ! -f {} ]; do sleep 0.05; done; echo started > {}",
+                shell_quote_path(&ready),
+                shell_quote_path(&release),
+                shell_quote_path(&output)
+            )),
             tags: vec![],
         };
 
-        let started_at = Instant::now();
         let launched = start_service(&service).expect("launch service");
 
-        assert!(
-            started_at.elapsed() < Duration::from_millis(900),
-            "start should return quickly for background launches"
-        );
         assert!(launched.pid > 0);
         assert_eq!(launched.log_path, repo.join(".devports").join("start.log"));
+
+        for _ in 0..30 {
+            if ready.exists() {
+                break;
+            }
+            thread::sleep(Duration::from_millis(100));
+        }
+
+        assert!(ready.exists(), "start command never began executing");
+        assert!(
+            !output.exists(),
+            "start_service should return before the launched command completes"
+        );
+
+        fs::write(&release, "").expect("release background command");
 
         for _ in 0..30 {
             if output.exists() {
@@ -338,5 +391,10 @@ mod tests {
         }
 
         assert!(output.exists(), "background start command did not complete");
+    }
+
+    fn shell_quote_path(path: &std::path::Path) -> String {
+        let escaped = path.display().to_string().replace('\'', "'\\''");
+        format!("'{escaped}'")
     }
 }

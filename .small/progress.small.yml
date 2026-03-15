@@ -184,3 +184,23 @@ entries:
       status: completed
       task_id: task-13
       timestamp: "2026-03-09T02:21:20.638018000Z"
+    - evidence: Reworked start-service shell spawning to prefer zsh when available, fall back to bash/sh on Linux, and replaced the background-launch unit test with a handshake-based assertion that no longer depends on scheduler timing.
+      notes: Updated src/lib.rs only; the test now waits for a ready marker, verifies start_service returned before completion, then releases the command and waits for completion.
+      status: completed
+      task_id: task-14
+      timestamp: "2026-03-14T00:00:00.000000000Z"
+    - evidence: cargo test start_service_launches_in_background passed; cargo test passed; small check --strict required progress entries for the new plan tasks and will be rerun after this artifact update.
+      notes: Validation covers the targeted regression, the full Rust test suite, and SMALL strict-mode consistency for the new CI-fix tasks.
+      status: completed
+      task_id: task-15
+      timestamp: "2026-03-14T00:00:01.000000000Z"
+    - evidence: small check --strict passed after the new task-14/task-15 progress entries were appended, confirming the SMALL artifacts are consistent with the CI fix.
+      notes: Final validation state for the Linux CI stabilization work.
+      status: completed
+      task_id: task-15
+      timestamp: "2026-03-14T00:00:02.000000000Z"
+    - evidence: 'git commit -m "Stabilize start service CI test" failed with `fatal: Unable to create ''/Users/jcnagent/Agent/Projects/cli-tools/devports/.git/index.lock'': Operation not permitted`.'
+      notes: Sandbox permissions allow editing the workspace but do not allow writing git metadata, so the requested commit could not be created in this environment.
+      status: blocked
+      task_id: task-16
+      timestamp: "2026-03-14T00:00:03.000000000Z"

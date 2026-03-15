@@ -40,3 +40,12 @@ tasks:
     - id: task-13
       title: Validate release packaging and refresh SMALL handoff
       status: completed
+    - id: task-14
+      title: Stabilize Linux CI coverage for service start behavior
+      status: completed
+    - id: task-15
+      title: Re-run tests, validate SMALL state, and finalize CI fix handoff
+      status: completed
+    - id: task-16
+      title: Create git commit for the Linux CI stabilization fix
+      status: blocked

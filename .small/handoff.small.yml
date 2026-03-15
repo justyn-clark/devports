@@ -1,8 +1,10 @@
 small_version: "1.0.0"
 owner: agent
-summary: Run complete. strict check passed. All plan tasks completed.
+summary: Linux CI service-start coverage was stabilized and validated locally, but creating the requested git commit is blocked by sandbox restrictions on .git/index.lock.
 resume:
-    next_steps: []
+    current_task_id: task-16
+    next_steps:
+        - Create the git commit once write access to .git metadata is available, using the already-staged intent in src/lib.rs and the refreshed .small artifacts.
 links: []
 replayId:
     value: 994665e8d163ac705b8c76134160a2ec9f38525a4ea63e31e6e5dbaa25f2b463
