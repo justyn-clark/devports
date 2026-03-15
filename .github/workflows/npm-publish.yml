@@ -49,6 +49,10 @@ jobs:
             exit 1
           fi
 
+      - name: Show npm auth identity
+        run: |
+          npm whoami || true
+
       - name: Publish @justynclark/devports via npm Trusted Publishing (OIDC)
         working-directory: packages/npm
         run: npm publish --provenance --access public
