@@ -65,7 +65,7 @@ release:
 
     Install with npm:
     ```bash
-    npm i -g @justyn-clark/devports
+    npm i -g @justynclark/devports
     ```
 
 brews:

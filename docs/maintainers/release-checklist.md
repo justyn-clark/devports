@@ -34,7 +34,7 @@ PATH=/tmp/devportsbin:$PATH devports --version
 2. npm package:
 
 ```bash
-npm i -g @justyn-clark/devports@X.Y.Z
+npm i -g @justynclark/devports@X.Y.Z
 devports --version
 ```
 
@@ -58,7 +58,7 @@ devports --version
 
 1. Set `packages/npm/package.json` version to `X.Y.Z`.
 2. Ensure tag is `vX.Y.Z`.
-3. Configure npm Trusted Publishing (OIDC) for `@justyn-clark/devports` with this GitHub repo/workflow as trusted publisher.
+3. Configure npm Trusted Publishing (OIDC) for `@justynclark/devports` with this GitHub repo/workflow as trusted publisher.
 4. Publish workflow must run with Node 24 and npm 11.10.1.
 5. Publish with provenance:
 

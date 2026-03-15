@@ -34,16 +34,21 @@ jobs:
       - name: Upgrade npm
         run: npm install -g npm@11.10.1
 
-      - name: Verify npm package version matches tag
+      - name: Verify npm package metadata matches release intent
         run: |
           set -euo pipefail
           TAG="${{ github.event.inputs.tag || github.ref_name }}"
           PKG_VERSION="$(node -p "require('./packages/npm/package.json').version")"
+          PKG_NAME="$(node -p "require('./packages/npm/package.json').name")"
+          if [ "${PKG_NAME}" != "@justynclark/devports" ]; then
+            echo "Expected packages/npm/package.json name to be @justynclark/devports, got ${PKG_NAME}"
+            exit 1
+          fi
           if [ "v${PKG_VERSION}" != "${TAG}" ]; then
             echo "Tag ${TAG} does not match packages/npm/package.json version ${PKG_VERSION}"
             exit 1
           fi
 
-      - name: Publish @justyn-clark/devports via npm Trusted Publishing (OIDC)
+      - name: Publish @justynclark/devports via npm Trusted Publishing (OIDC)
         working-directory: packages/npm
         run: npm publish --provenance --access public

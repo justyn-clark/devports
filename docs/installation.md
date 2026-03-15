@@ -63,7 +63,7 @@ npm install behavior:
 If the binary is missing after install:
 
 ```bash
-npm rebuild @justyn-clark/devports
+npm rebuild @justynclark/devports
 ```
 
 ## Option 3: Homebrew
@@ -103,5 +103,5 @@ sudo rm -f /usr/local/bin/devports
 npm global install:
 
 ```bash
-npm uninstall -g @justyn-clark/devports
+npm uninstall -g @justynclark/devports
 ```

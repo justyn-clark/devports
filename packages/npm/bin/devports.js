@@ -7,7 +7,7 @@ const { spawnSync } = require("node:child_process");
 const binaryPath = path.resolve(__dirname, "..", "vendor", process.platform === "win32" ? "devports.exe" : "devports");
 
 if (!fs.existsSync(binaryPath)) {
-  console.error("devports binary missing. Reinstall or run npm rebuild @justyn-clark/devports");
+  console.error("devports binary missing. Reinstall or run npm rebuild @justynclark/devports");
   process.exit(1);
 }
 

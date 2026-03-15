@@ -1,11 +1,11 @@
-# @justyn-clark/devports
+# @justynclark/devports
 
 This package installs the native `devports` binary for your platform and exposes it as `devports`.
 
 ## Install
 
 ```bash
-npm i -g @justyn-clark/devports
+npm i -g @justynclark/devports
 devports --version
 ```
 
