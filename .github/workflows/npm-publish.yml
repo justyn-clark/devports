@@ -31,6 +31,13 @@ jobs:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
+      - name: Require NPM_TOKEN bootstrap secret
+        run: |
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "NPM_TOKEN secret is required for devports bootstrap publish"
+            exit 1
+          fi
+
       - name: Upgrade npm
         run: npm install -g npm@11.10.1
 
@@ -50,9 +57,13 @@ jobs:
           fi
 
       - name: Show npm auth identity
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm whoami || true
+          npm whoami
 
-      - name: Publish @justynclark/devports via npm Trusted Publishing (OIDC)
+      - name: Publish @justynclark/devports via npm token bootstrap
         working-directory: packages/npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --provenance --access public
