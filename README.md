@@ -9,6 +9,11 @@
 
 # devports
 
+[![Release](https://github.com/justyn-clark/devports/actions/workflows/release.yml/badge.svg)](https://github.com/justyn-clark/devports/actions/workflows/release.yml)
+[![npm](https://img.shields.io/npm/v/%40justynclark%2Fdevports)](https://www.npmjs.com/package/@justynclark/devports)
+[![Rust](https://img.shields.io/badge/rust-edition%202024-orange)](https://www.rust-lang.org)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 A CLI command center for local development services.
 
 `devports` tracks configured local services, inspects live listeners, launches configured apps, opens only services that are actually running, and prints LAN-friendly URLs when you want to reach those apps from another device.
