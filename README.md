@@ -9,24 +9,32 @@
 
 # devports
 
-A lightweight CLI for managing local development ports.
+A CLI command center for local development services.
 
-`devports` tracks configured local services, inspects live listeners, launches configured apps, opens running local apps in the browser, and prints LAN-friendly URLs when you want to reach those apps from another device.
+`devports` tracks configured local services, inspects live listeners, launches configured apps, opens only services that are actually running, and prints LAN-friendly URLs when you want to reach those apps from another device.
 
 <img width="1197" height="607" alt="devports-tui" src="https://github.com/user-attachments/assets/61c6a127-6ba0-4634-bb10-8af6a9a6bd24" />
 
 ## Install
 
+Recommended install paths:
+
+- npm: `npm i -g @justynclark/devports`
+- curl: `curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash`
+- Homebrew:
+  - `brew tap justyn-clark/homebrew-tap`
+  - `brew install devports`
+
+Alternative developer install:
+
 ```bash
 cargo install --git https://github.com/justyn-clark/devports
 ```
 
-Other install paths:
-
-- npm: `npm i -g @justynclark/devports`
-- curl: `curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash`
-- Homebrew instructions: [docs/installation.md](docs/installation.md)
+Notes:
+- release automation currently ships macOS and Linux binaries
 - Windows/Scoop packaging is temporarily disabled while the release pipeline is moved off the current failing Windows cross-compile path
+- full install details live in [docs/installation.md](docs/installation.md)
 
 ## Example config
 

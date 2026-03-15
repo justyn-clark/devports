@@ -34,7 +34,7 @@ curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/
 Install a specific version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash -s -- --version v0.1.4
+curl -fsSL https://raw.githubusercontent.com/justyn-clark/devports/main/scripts/install.sh | bash -s -- --version v0.1.5
 ```
 
 Install behavior:
@@ -77,7 +77,7 @@ npm rebuild @justynclark/devports
 ## Option 3: Homebrew
 
 ```bash
-brew tap justyn-clark/tap
+brew tap justyn-clark/homebrew-tap
 brew install devports
 ```
 
