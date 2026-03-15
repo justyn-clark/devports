@@ -128,11 +128,11 @@ If no services are configured, `devports urls` prints an explicit message instea
 
 ## Real Example
 
-For `/Users/justin/Documents/Justyn Clark Network/REPOS/jcn-studio-mcp`, the repo already defines a root `dev` script that runs the web app, and the Vite config sets port `4321`. A working config entry for that project is:
+For a repo like `~/projects/jcn-studio-mcp`, where the project already defines a root `dev` script and Vite is configured for port `4321`, a working config entry would look like this:
 
 ```bash
 devports config add jcn-studio-web \
-  --repo "/Users/justin/Documents/Justyn Clark Network/REPOS/jcn-studio-mcp" \
+  --repo "~/projects/jcn-studio-mcp" \
   --port 4321 \
   --start "pnpm dev"
 ```
