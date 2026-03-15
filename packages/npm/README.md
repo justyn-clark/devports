@@ -78,9 +78,12 @@ devports config add <name> --repo <path> --port <port> [--start <command>]
 
 ## Supported platforms
 
+Current published release assets support:
+
 - macOS: amd64, arm64
 - Linux: amd64, arm64
-- Windows: amd64
+
+Windows packaging is temporarily unavailable while the release pipeline is migrated away from the current failing cargo-zigbuild Windows cross-compile path.
 
 ## More docs
 

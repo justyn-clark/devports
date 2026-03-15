@@ -2,17 +2,25 @@
 
 ## Supported platforms
 
+Current release automation supports:
+
 - macOS: amd64, arm64
 - Linux: amd64, arm64
+
+Temporarily disabled in release CI:
+
 - Windows: amd64
 
-Release asset names are stable:
+Reason:
+- the current cargo-zigbuild Windows cross-compile path fails on `libsynchronization` linkage via `windows-sys 0.61+`
+- Windows artifacts and Scoop publication should be treated as unavailable until a native Windows build path or upstream-compatible toolchain fix is in place
+
+Release asset names currently expected from CI:
 
 - `devports-vX.Y.Z-darwin-amd64.tar.gz`
 - `devports-vX.Y.Z-darwin-arm64.tar.gz`
 - `devports-vX.Y.Z-linux-amd64.tar.gz`
 - `devports-vX.Y.Z-linux-arm64.tar.gz`
-- `devports-vX.Y.Z-windows-amd64.zip`
 - `checksums.txt`
 
 ## Option 1: curl installer
@@ -75,10 +83,9 @@ brew install devports
 
 ## Option 4: Scoop
 
-```powershell
-scoop bucket add justyn-clark https://github.com/justyn-clark/scoop-bucket
-scoop install devports
-```
+Temporarily unavailable.
+
+Scoop depends on a Windows release artifact, and Windows release packaging is currently disabled until the toolchain issue is fixed.
 
 ## PATH notes
 

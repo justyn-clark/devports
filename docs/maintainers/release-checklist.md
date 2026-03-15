@@ -13,14 +13,15 @@ git push origin vX.Y.Z
 
 ## 2) Verify GitHub release assets
 
+Current expected assets from CI:
 1. Confirm release has:
    - `devports-vX.Y.Z-darwin-amd64.tar.gz`
    - `devports-vX.Y.Z-darwin-arm64.tar.gz`
    - `devports-vX.Y.Z-linux-amd64.tar.gz`
    - `devports-vX.Y.Z-linux-arm64.tar.gz`
-   - `devports-vX.Y.Z-windows-amd64.zip`
    - `checksums.txt`
 2. Verify `checksums.txt` includes each asset.
+3. Do not expect a Windows asset until the Windows build path is reintroduced.
 
 ## 3) Verify installer paths
 
@@ -48,11 +49,7 @@ devports --version
 
 4. Scoop manifest:
 
-```powershell
-scoop update
-scoop install devports
-devports --version
-```
+Temporarily skipped. Scoop depends on a Windows release artifact, and Windows packaging is currently disabled pending a replacement build path.
 
 ## 4) npm publish
 
