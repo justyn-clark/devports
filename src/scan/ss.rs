@@ -3,9 +3,7 @@ use anyhow::Result;
 use super::model::ListenerRecord;
 
 pub fn run_ss() -> Result<Vec<ListenerRecord>> {
-    let out = std::process::Command::new("ss")
-        .args(["-lptn"])
-        .output()?;
+    let out = std::process::Command::new("ss").args(["-lptn"]).output()?;
 
     if !out.status.success() {
         return Ok(vec![]);

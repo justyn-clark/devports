@@ -56,6 +56,9 @@ fn signal_group(pgid: i32, hard: bool) -> Result<()> {
 
 fn signal_pid(pid: i32, hard: bool) -> Result<()> {
     let sig = if hard { "-KILL" } else { "-TERM" };
-    let _ = Command::new("kill").arg(sig).arg(pid.to_string()).status()?;
+    let _ = Command::new("kill")
+        .arg(sig)
+        .arg(pid.to_string())
+        .status()?;
     Ok(())
 }

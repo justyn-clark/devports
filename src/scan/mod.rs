@@ -22,7 +22,9 @@ pub fn scan_listeners() -> Result<Vec<ScanRecord>> {
             pid: listener.pid,
             ppid: ps.as_ref().map(|v| v.ppid),
             pgid: ps.as_ref().map(|v| v.pgid),
-            command: ps.map(|v| v.command).unwrap_or_else(|| "<unknown>".to_string()),
+            command: ps
+                .map(|v| v.command)
+                .unwrap_or_else(|| "<unknown>".to_string()),
             cwd,
             repo_root,
         });

@@ -9,7 +9,7 @@ use std::path::Path;
 use std::process::Command;
 use std::time::Duration;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use cli::{Commands, ConfigCommands};
 use config::{Config, ServiceConfig};
 use scan::model::{JoinedPortRecord, ScanRecord};
@@ -26,7 +26,7 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
             render::json::print_pretty(&records)?;
         }
         Commands::List => {
-            let cfg = Config::load(&config_path)?;
+            let cfg = load_config_or_empty(&config_path)?;
             let joined = join_records(&scan::scan_listeners()?, &cfg);
             if cli.json {
                 render::json::print_pretty(&joined)?;
@@ -35,7 +35,7 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
             }
         }
         Commands::Tui => {
-            let cfg = Config::load(&config_path)?;
+            let cfg = load_config_or_empty(&config_path)?;
             tui::run_tui(config_path.as_path(), cfg)?;
         }
         Commands::Kill {
@@ -58,7 +58,7 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
             start_service(svc)?;
         }
         Commands::Doctor => {
-            let cfg = Config::load(&config_path)?;
+            let cfg = load_config_or_empty(&config_path)?;
             let report = config::doctor::doctor(&cfg, &scan::scan_listeners()?);
             if cli.json {
                 render::json::print_pretty(&report)?;
@@ -70,14 +70,20 @@ pub fn execute(cli: cli::Cli) -> Result<()> {
             }
         }
         Commands::Urls { host } => {
-            let cfg = Config::load(&config_path)?;
+            let cfg = load_config_or_empty(&config_path)?;
             let records = scan::scan_listeners()?;
 
             let hostname = host.unwrap_or_else(|| {
-                hostname::get()
+                let name = hostname::get()
                     .unwrap_or_default()
                     .to_string_lossy()
-                    .to_string()
+                    .to_string();
+
+                if name.ends_with(".local") {
+                    name
+                } else {
+                    format!("{name}.local")
+                }
             });
 
             let mut services = cfg.services.iter().collect::<Vec<_>>();
@@ -148,12 +154,21 @@ fn start_service(service: &ServiceConfig) -> Result<()> {
 
     let mut cmd = Command::new("zsh");
     cmd.arg("-lc").arg(start).current_dir(&service.repo);
-    let status = cmd.status().context("failed to execute start command")?;
-    if !status.success() {
-        bail!("start command exited with {status}");
-    }
+    cmd.spawn().context("failed to start service")?;
+
+    println!("started {}", service.repo.display());
 
     Ok(())
+}
+
+fn load_config_or_empty(path: &Path) -> Result<Config> {
+    if path.exists() {
+        Config::load(path)
+    } else {
+        Ok(Config {
+            services: Default::default(),
+        })
+    }
 }
 
 pub fn open_config(path: &Path) -> Result<()> {

@@ -41,13 +41,18 @@ pub fn run_tui(config_path: &Path, cfg: Config) -> Result<()> {
                 Action::Rescan => app.set_rows(join_with_config(&cfg)?),
                 Action::Term => {
                     if let Some(row) = app.selected() {
-                        let _ = proc::kill::kill_record(&row.record, Duration::from_millis(1500), false);
+                        let _ = proc::kill::kill_record(
+                            &row.record,
+                            Duration::from_millis(1500),
+                            false,
+                        );
                         app.set_rows(join_with_config(&cfg)?);
                     }
                 }
                 Action::Kill => {
                     if let Some(row) = app.selected() {
-                        let _ = proc::kill::kill_record(&row.record, Duration::from_millis(1), true);
+                        let _ =
+                            proc::kill::kill_record(&row.record, Duration::from_millis(1), true);
                         app.set_rows(join_with_config(&cfg)?);
                     }
                 }
