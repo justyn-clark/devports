@@ -1,16 +1,9 @@
-```text
-██████╗ ███████╗██╗   ██╗██████╗  ██████╗ ██████╗ ████████╗███████╗
-██╔══██╗██╔════╝██║   ██║██╔══██╗██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝
-██║  ██║█████╗  ██║   ██║██████╔╝██║   ██║██████╔╝   ██║   ███████╗
-██║  ██║██╔══╝  ╚██╗ ██╔╝██╔═══╝ ██║   ██║██╔══██╗   ██║   ╚════██║
-██████╔╝███████╗ ╚████╔╝ ██║     ╚██████╔╝██║  ██║   ██║   ███████║
-╚═════╝ ╚══════╝  ╚═══╝  ╚═╝      ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝
-```
-
 # devports
 
 [![Release](https://github.com/justyn-clark/devports/actions/workflows/release.yml/badge.svg)](https://github.com/justyn-clark/devports/actions/workflows/release.yml)
-[![npm](https://img.shields.io/npm/v/%40justynclark%2Fdevports)](https://www.npmjs.com/package/@justynclark/devports)
+[![npm publish](https://github.com/justyn-clark/devports/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/justyn-clark/devports/actions/workflows/npm-publish.yml)
+[![GitHub release](https://img.shields.io/github/v/release/justyn-clark/devports)](https://github.com/justyn-clark/devports/releases)
+[![npm version](https://img.shields.io/npm/v/%40justynclark%2Fdevports)](https://www.npmjs.com/package/@justynclark/devports)
 [![Rust](https://img.shields.io/badge/rust-edition%202024-orange)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
